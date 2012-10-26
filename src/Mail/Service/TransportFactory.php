@@ -32,14 +32,14 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  *
- * @package     Soflomo\Transport
+ * @package     Soflomo\Mail
  * @author      Jurian Sluiman <jurian@soflomo.com>
  * @copyright   2012 Jurian Sluiman.
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  * @link        http://soflomo.com
  */
 
-namespace Soflomo\Transport\Service;
+namespace Soflomo\Mail\Service;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -50,7 +50,18 @@ class TransportFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('config');
         $config = $config['soflomo_mail'];
+        $name   = 'Zend\Mail\Transport\\' . ucfirst($config['transport']['type']);
 
-        // Do work here
+        $options = $config['transport']['options'];
+        $options = array_replace_recursive($options, array(
+            '%USERNAME%' => $config['username'],
+            '%PASSWORD%' => $config['password'],
+        ));
+
+        $class   = $name . 'Options';
+        $options = new $class($options);
+
+        $transport = new $name($options);
+        return $transport;
     }
 }

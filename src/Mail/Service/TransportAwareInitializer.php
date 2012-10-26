@@ -49,7 +49,7 @@ class TransportAwareInitializer implements InitializerInterface
 {
     public function initialize($instance, ServiceLocatorInterface $serviceLocator)
     {
-        if ($instance instanceof LoggerAwareInterface) {
+        if ($instance instanceof TransportAwareInterface) {
             static $transport;
             if (!$transport) {
                 $transport = $serviceLocator->get('Soflomo\Mail\Transport');
