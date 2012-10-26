@@ -1,0 +1,30 @@
+{
+    "name": "soflomo/mail",
+    "description": "Small module to help with mail transport aware classes",
+    "license": "BSD-3-Clause",
+    "type": "library",
+    "keywords": [
+        "zf2",
+        "mail"
+    ],
+    "homepage": "https://github.com/Soflomo/Mail",
+    "authors": [
+        {
+            "name": "Jurian Sluiman",
+            "email": "jurian@soflomo.com",
+            "homepage": "http://soflomo.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.3.",
+        "zendframework/zendframework": "2.0.*@beta"
+    },
+    "autoload": {
+        "psr-0": {
+            "Soflomo\\Mail": "src/"
+        },
+        "classmap": [
+            "./Module.php"
+        ]
+    }
+}
