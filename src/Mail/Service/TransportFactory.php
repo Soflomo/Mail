@@ -50,18 +50,71 @@ class TransportFactory implements FactoryInterface
     {
         $config = $serviceLocator->get('config');
         $config = $config['soflomo_mail'];
-        $name   = 'Zend\Mail\Transport\\' . ucfirst($config['transport']['type']);
+        $name   = $config['transport']['type'];
 
-        $options = $config['transport']['options'];
-        $options = array_replace_recursive($options, array(
-            '%USERNAME%' => $config['username'],
-            '%PASSWORD%' => $config['password'],
-        ));
+        // Allow type as FQCN, defaults to Zend\Mail\Transport\* type
+        if (!class_exists($type)) {
+            $name = 'Zend\Mail\Transport\\' . ucfirst($name);
+        }
 
-        $class   = $name . 'Options';
-        $options = new $class($options);
+        $transport = new $name;
 
-        $transport = new $name($options);
+        // Set options if present
+        if (!empty($config['transport']['options'])) {
+            $options = $config['transport']['options'];
+
+            if (!empty($config['transport']['variables'])) {
+                $variables = $config['transport']['variables'];
+
+                // Make sure every key in variables is %KEY_NAME% format
+                $variables = array_flip($variables);
+                $variables = array_map(function($value) {
+                    return '%' . strtoupper($value) . '%';
+                }, $variables);
+                $variables = array_flip($variables);
+
+                $options   = $this->replace($options, $variables);
+            }
+
+            $name = $name . 'Options';
+            $optionsClass = new $name($options);
+
+            $transport->setOptions($optionsClass);
+        }
+
         return $transport;
+    }
+
+    /**
+     * Replace values of an array if they match variables key
+     *
+     * This mimicks "template" behaviour. Example code to show result:
+     *
+     * <code>
+     * $options   => array('my_key' => '%FOO%');
+     * $variables => array('%FOO%'  => 'Bar');
+     *
+     * // Result:
+     * array('my_key' => 'Bar');
+     * </code>
+     *
+     * @param  array $options     Original base array
+     * @param  array $variables   Variables array
+     *
+     * @return array              New replaced base array
+     */
+    public function replace($options, $variables)
+    {
+        foreach ($options as $name => $value) {
+            if (is_array($value)) {
+                $options[$name] = $this->replace($value, $variables);
+            }
+
+            if (array_key_exists($value, $variables)) {
+                $options[$name] = $variables[$value];
+            }
+        }
+
+        return $options;
     }
 }
