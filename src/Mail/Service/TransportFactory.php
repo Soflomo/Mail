@@ -53,7 +53,7 @@ class TransportFactory implements FactoryInterface
         $name   = $config['transport']['type'];
 
         // Allow type as FQCN, defaults to Zend\Mail\Transport\* type
-        if (!class_exists($type)) {
+        if (!class_exists($name)) {
             $name = 'Zend\Mail\Transport\\' . ucfirst($name);
         }
 
@@ -108,6 +108,7 @@ class TransportFactory implements FactoryInterface
         foreach ($options as $name => $value) {
             if (is_array($value)) {
                 $options[$name] = $this->replace($value, $variables);
+                continue;
             }
 
             if (array_key_exists($value, $variables)) {
