@@ -193,6 +193,25 @@ $service->send(array(
 ));
 ```
 
+### Use your own message object
+
+If you happen to have a message object already, you can set it as the third
+parameter. You can have a message object which you have already configured
+partially or you need to reuse an instantiated message.
+
+```php
+// $messaga is an instance of Zend\Mail\Message
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$message->setFrom('alice@acme.com');
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'       => 'bob@acme.com',
+  'subject'  => 'Just want to say hi',
+  'template' => 'email/test',
+), array(), $message);
+```
+
 Configuration
 -------------
 
