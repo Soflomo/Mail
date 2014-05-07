@@ -142,7 +142,7 @@ key.
 
 $service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
 $service->send(array(
-  'to'       => array('bob@acme.com'),
+  'to'       => 'bob@acme.com',
   'subject'  => 'Just want to say hi',
   'template' => 'email/test',
   'headers'  => array(
@@ -161,12 +161,35 @@ via the `attachments` key:
 
 $service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
 $service->send(array(
-  'to'          => array('bob@acme.com'),
+  'to'          => 'bob@acme.com',
   'subject'     => 'Just want to say hi',
   'template'    => 'email/test',
   'attachments' => array(
     // ...
   ),
+));
+```
+
+### Use template variables
+
+The `send()` method accepts a second paramter to inject variables in the view
+template.
+
+```php
+// Your template
+<p>Welcome <?= $name?></p>
+```
+
+```php
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'       => 'bob@acme.com',
+  'subject'  => 'Just want to say hi',
+  'template' => 'email/test',
+), array(
+  'name'     => 'Bob',
 ));
 ```
 
