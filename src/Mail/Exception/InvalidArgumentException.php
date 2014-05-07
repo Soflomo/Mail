@@ -37,51 +37,11 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-return array(
-    'soflomo_mail' => array(
-        'message'    => array(
-            'from'      => '',
-            'from_name' => '',
-            'encoding'  => 'UTF-8',
-        ),
+namespace Soflomo\Mail\Exception;
 
-        'transport' => array(
-            'type'    => 'smtp',
-            'options' => array(
-                'name' => 'gmail.com',
-                'host' => 'smtp.gmail.com',
-                'port' => 587,
-                'connection_class'  => 'login',
-                'connection_config' => array(
-                    'ssl'      => 'tls',
-                    'username' => '%USERNAME%',
-                    'password' => '%PASSWORD%',
-                ),
-            ),
-            'variables' => array(
-                'username' => '',
-                'password' => '',
-            ),
-        ),
-    ),
+use InvalidArgumentException as BaseException;
 
-    'service_manager' => array(
-        'aliases' => array(
-            'Soflomo\Mail\Renderer'  => 'ViewRenderer',
-            'Soflomo\Mail\Transport' => 'Soflomo\Mail\DefaultTransport',
-            'Soflomo\Mail\Message'   => 'Soflomo\Mail\DefaultMessage',
-        ),
-        'factories' => array(
-            'Soflomo\Mail\DefaultTransport'    => 'Soflomo\Mail\Factory\DefaultTransportFactory',
-            'Soflomo\Mail\DefaultMessage'      => 'Soflomo\Mail\Factory\DefaultMessageFactory',
-            'Soflomo\Mail\Service\MailService' => 'Soflomo\Mail\Factory\MailServiceFactory',
-        ),
-        'initializers' => array(
-            'mail_transport' => 'Soflomo\Mail\Service\TransportAwareInitializer',
-            'mail_message'   => 'Soflomo\Mail\Service\MessageAwareInitializer',
-        ),
-        'shared' => array(
-            'Soflomo\Mail\DefaultMessage' => false,
-        ),
-    )
-);
+class InvalidArgumentException extends BaseException implements ExceptionInterface
+{
+
+}
