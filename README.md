@@ -129,6 +129,44 @@ not recognized. If you want to leave the name blank, use `null`:
 
     array('bob@acme.com' => null, 'alice@acme.com' => null)
 
+### Send custom headers
+
+You can add additional headers to the email message object with the `headers`
+key.
+
+```php
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'       => array('bob@acme.com'),
+  'subject'  => 'Just want to say hi',
+  'template' => 'email/test',
+  'headers'  => array(
+    'X-Send-By' => 'MyCustomApp'
+  ),
+));
+```
+
+### Add attachments
+
+Attachment support is planned and not yet implemented. Attachments will be send
+via the `attachments` key:
+
+```php
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'          => array('bob@acme.com'),
+  'subject'     => 'Just want to say hi',
+  'template'    => 'email/test',
+  'attachments' => array(
+    // ...
+  ),
+));
+```
+
 Configuration
 -------------
 
