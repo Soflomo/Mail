@@ -83,5 +83,11 @@ return array(
         'shared' => array(
             'Soflomo\Mail\DefaultMessage' => false,
         ),
-    )
+    ),
+
+    'controller_plugins' => array(
+        'factories' => array(
+            'email' => 'Soflomo\Mail\Factory\EmailControllerPluginFactory',
+        ),
+    ),
 );
