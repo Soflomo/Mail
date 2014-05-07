@@ -61,7 +61,37 @@ is the name of the template which is resolved by the PhpRenderer and set as body
 in the message.
 
 The `send()` configures the message, renders the `email/test` template and sends
-the message with a configured transport.
+the message with a [configured transport](#smtp-sending-with-the-default-transport).
+
+### Additional options
+
+You can use, besides `to`, also `from`, `cc`, `bcc` and `reply_to`. For every
+addressee you can suffix the option with `_name` to set the name of the address
+part.
+
+```php
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'            => 'bob@acme.com',
+  'subject'       => 'Just want to say hi',
+  'template'      => 'email/test',
+
+  'to_name'       => 'Bob',
+  'from'          => 'alice@acme.com',
+  'from_name'     => 'Alice',
+
+  'cc'            => 'mike@acme.com',
+  'cc_name'       => 'Mike',
+
+  'bcc'           => 'john@acme.com'
+  'bcc_name'      => 'John',
+
+  'reply_to'      => 'internals@acme.com',
+  'reply_to_name' => 'ACME Corp internals mailing list'
+));
+```
 
 Configuration
 -------------
@@ -102,7 +132,8 @@ corresponding to the type (for "smtp" an `SmtpOptions` class is used).
 
 Alternatively, give the type a FQCN and it utilizes that class for the transport.
 Be aware this FQCN is a simple solution and cannot implement dependency injection.
-For more advanced usage, see how to configure your [own custom transport].
+For more advanced usage, see how to configure your
+[own custom transport](/home/jurian/Projects/StrawberryEarth-Ella/vendor/soflomo/mail/README.md).
 
 ### Use an existing alternative transport service
 
