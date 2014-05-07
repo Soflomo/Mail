@@ -1,13 +1,117 @@
 Soflomo\Mail
-===
-`Soflomo\Mail` is a small module that provides a drop-in configuration, instantiation and initialization of a `Zend\Mail\Transport` and `Zend\Mail\Message` object. Its purpose it to have email transportation enabled in your Zend Framework 2 application with only a small configuration file. The module is opinionated with the configuration of transport, but you are free to configure your own.
+============
+
+Soflomo\Mail is a facade module that integrates various components to send
+e-mails in Zend Framework 2. It allows users to compose messages, render
+templates and configure transports in one call. Every component is loosly
+coupled and can be replaced at runtime.
+
+Soflomo\Mail offers:
+
+ 1. A single `send()` to configure a message, render the templates and send it
+ 2. A default message objects with pre-filled variables like the "From" field
+ 2. A default transport which can by configured inside your configuration files
+ 3. All parts can be replaced by any of your own
 
 Installation
----
-`Soflomo\Mail` is available through composer. Add "soflomo/mail" to your composer.json list. During development of `Soflomo\Mail`, you can specify the latest available version:
+------------
 
-```
-"soflomo/mail": "dev-master"
+Soflomo\Mail works with [Composer](https://getcomposer.org). Make sure you have
+the composer.phar downloaded and you have a `composer.json` file at the root of
+your project. To install it, add the following line into your `composer.json`
+file:
+
+"require": {
+    "soflomo/mail": "~0.2"
+}
+After installation of the package, you need to complete the following steps to
+use Soflomo\Mail:
+
+ 1. Enable the module by adding `Soflomo\Mail` to your `application.config.php`
+ file.
+ 2. Copy the `soflomo_mail.global.php.dist` (you can find this file in the
+ `config` folder of Soflomo\Mail) into your config/autoload folder and apply any
+ setting you want.
+
+Requirements
+------------
+
+ 1. Zend Framework 2: the `Zend\Mail` component
+ 2. Zend Framework 2: the `Zend\ServiceManager` component
+
+Usage
+-----
+
+Soflomo\Mail uses a central `MailService` facade. This service exposes a single
+`send()` method to send an email based on some variables:
+
+```php
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'       => 'bob@acme.com',
+  'subject'  => 'Just want to say hi',
+  'template' => 'email/test',
+));
 ```
 
-Enable the module in your `config/application.config.php` file. Add an entry `Soflomo\Mail` to the list of enabled modules. Logging should work out of the box.
+The three keys are required to send an email. In the above example, `template`
+is the name of the template which is resolved by the PhpRenderer and set as body
+in the message.
+
+The `send()` configures the message, renders the `email/test` template and sends
+the message with a configured transport.
+
+Configuration
+-------------
+
+Soflomo\Mail is completely configurable to your needs. The module utilizes
+dependency injection. This allows any user to drop in their own parts replacing
+the default services from Soflomo\Mail. In the usage section, some examples are
+given for these situations.
+
+### SMTP sending with the default transport
+
+The transport Soflomo\Mail uses (called `Soflomo\Mail\Transport`) is an alias for
+the default transport (`Soflomo\Mail\DefaultTransport`). You can use the default
+transport for configuration-based SMTP transports. Just copy this to your local
+config file in the `config/autoload` directory:
+
+```php
+'soflomo_mail' => array(
+    'transport' => array(
+        'type'    => 'smtp',
+        'options' => array(
+            'name' => 'myserver.com',
+            'host' => 'smtp.myserver.com',
+            'connection_class'  => 'login',
+            'connection_config' => array(
+                'ssl'      => 'tls',
+                'username' => 'my-username',
+                'password' => 'my-password',
+            ),
+        ),
+    ),
+),
+```
+
+The 'type' can be a class from `Zend\Mail\Transport\*` (so either "file", "smtp"
+or "sendmail"). The `options` array is used to instantiate an options object
+corresponding to the type (for "smtp" an `SmtpOptions` class is used).
+
+Alternatively, give the type a FQCN and it utilizes that class for the transport.
+Be aware this FQCN is a simple solution and cannot implement dependency injection.
+For more advanced usage, see how to configure your [own custom transport].
+
+### Use an existing alternative transport service
+
+[SlmMail](http://github.com/juriansluiman/SlmMail) is a module which implements
+the API for various third party email providers like Mailgun, Postmark and
+Amazon SES.
+
+...
+
+### Use your custom transport factory
+
+...
