@@ -39,11 +39,6 @@
 
 return array(
     'soflomo_mail' => array(
-        'variables' => array(
-            'username' => '',
-            'password' => '',
-        ),
-
         'message'    => array(
             'from'      => '',
             'from_name' => '',
@@ -62,6 +57,10 @@ return array(
                     'username' => '%USERNAME%',
                     'password' => '%PASSWORD%',
                 ),
+            ),
+            'variables' => array(
+                'username' => '',
+                'password' => '',
             ),
         ),
     ),
