@@ -274,4 +274,16 @@ transport you use and it's automatically injected.
 
 ### Use your custom transport factory
 
-...
+When you have a custom transport and your factory registered, you can utilize it
+as well. Take the service name of your factory and set is as an alias.
+
+```php
+'service_manager' => array(
+    'factories' => array(
+        'MyApp\Mail\Transport\MyTransport' => 'MyApp\Mail\Transport\MyTransportFactory'
+    ),
+    'aliases' => array(
+        'Soflomo\Mail\Transport' => 'MyApp\Mail\Transport\MyTransport',
+    ),
+),
+```
