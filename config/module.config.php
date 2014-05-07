@@ -67,19 +67,20 @@ return array(
 
     'service_manager' => array(
         'aliases' => array(
-            'mail_transport' => 'Soflomo\Mail\Transport',
-            'mail_message'   => 'Soflomo\Mail\Message',
+            'Soflomo\Mail\Renderer'  => 'ViewRenderer',
+            'Soflomo\Mail\Transport' => 'Soflomo\Mail\DefaultTransport',
+            'Soflomo\Mail\Message'   => 'Soflomo\Mail\DefaultMessage',
         ),
         'factories' => array(
-            'Soflomo\Mail\Transport' => 'Soflomo\Mail\Service\TransportFactory',
-            'Soflomo\Mail\Message'   => 'Soflomo\Mail\Service\MessageFactory',
+            'Soflomo\Mail\DefaultTransport'    => 'Soflomo\Mail\Factory\DefaultTransportFactory',
+            'Soflomo\Mail\DefaultMessage'      => 'Soflomo\Mail\Factory\DefaultMessageFactory',
         ),
         'initializers' => array(
             'mail_transport' => 'Soflomo\Mail\Service\TransportAwareInitializer',
             'mail_message'   => 'Soflomo\Mail\Service\MessageAwareInitializer',
         ),
         'shared' => array(
-            'Soflomo\Mail\Message' => false,
+            'Soflomo\Mail\DefaultMessage' => false,
         ),
     )
 );

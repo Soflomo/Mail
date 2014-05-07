@@ -37,13 +37,13 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-namespace Soflomo\Mail\Service;
+namespace Soflomo\Mail\Factory;
 
 use Zend\Mail\Message;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class MessageFactory implements FactoryInterface
+class DefaultMessageFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
@@ -53,12 +53,13 @@ class MessageFactory implements FactoryInterface
         $message = new Message;
         $message->setEncoding($config['encoding']);
 
+        $name = null;
+        if (!empty($config['from_name'])) {
+            $name = $config['from_name'];
+        }
+
         if (!empty($config['from'])) {
-            if (!empty($config['from_name'])) {
-                $message->addFrom($config['from'], $config['from_name']);
-            } else {
-                $message->addFrom($config['from']);
-            }
+            $message->addFrom($config['from'], $name);
         }
 
         return $message;
