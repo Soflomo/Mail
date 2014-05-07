@@ -79,5 +79,8 @@ return array(
             'mail_transport' => 'Soflomo\Mail\Service\TransportAwareInitializer',
             'mail_message'   => 'Soflomo\Mail\Service\MessageAwareInitializer',
         ),
+        'shared' => array(
+            'Soflomo\Mail\Message' => false,
+        ),
     )
 );
