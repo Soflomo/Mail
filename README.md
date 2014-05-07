@@ -21,9 +21,12 @@ the composer.phar downloaded and you have a `composer.json` file at the root of
 your project. To install it, add the following line into your `composer.json`
 file:
 
+```
 "require": {
     "soflomo/mail": "~0.2"
 }
+```
+
 After installation of the package, you need to complete the following steps to
 use Soflomo\Mail:
 
