@@ -93,6 +93,29 @@ $service->send(array(
 ));
 ```
 
+### Send to multiple recipients
+
+You can make all of the addressees a key/value array. This allows you to send
+to multiple persons in one `send()` call.
+
+```php
+// $serviceLocator is an instance of Zend\Service\ServiceManager
+
+$service = $serviceLocator->get('Soflomo\Mail\Service\MailService');
+$service->send(array(
+  'to'       => array(
+    'bob@acme.com' => 'Bob', 'alice@acme.com' => 'Alice'
+  ),
+  'subject'  => 'Just want to say hi',
+  'template' => 'email/test',
+));
+```
+
+At this moment, the array must be a key/value pair. Non-associative arrays are
+not recognized. If you want to leave the name blank, use `null`:
+
+    array('bob@acme.com' => null, 'alice@acme.com' => null)
+
 Configuration
 -------------
 
