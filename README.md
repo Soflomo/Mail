@@ -210,7 +210,7 @@ corresponding to the type (for "smtp" an `SmtpOptions` class is used).
 Alternatively, give the type a FQCN and it utilizes that class for the transport.
 Be aware this FQCN is a simple solution and cannot implement dependency injection.
 For more advanced usage, see how to configure your
-[own custom transport](/home/jurian/Projects/StrawberryEarth-Ella/vendor/soflomo/mail/README.md).
+[own custom transport](#use-your-custom-transport-factory).
 
 ### Use an existing alternative transport service
 
