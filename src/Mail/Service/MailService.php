@@ -113,7 +113,7 @@ class MailService
 	 * @param  Message|null $message Optional message object to use
 	 * @return void
 	 */
-	public function send(array $options, array $variables, Message $message = null)
+	public function send(array $options, array $variables = array(), Message $message = null)
 	{
 		if (null === $message) {
 			$message = $this->getDefaultMessage();
