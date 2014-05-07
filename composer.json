@@ -16,8 +16,9 @@
         }
     ],
     "require": {
-        "php": ">=5.3.3.",
-        "zendframework/zendframework": "2.*"
+        "php": ">=5.3.3",
+        "zendframework/zend-mail": "~2.0",
+        "zendframework/zend-servicemanager": "~2.0",
     },
     "autoload": {
         "psr-0": {
