@@ -63,6 +63,19 @@ in the message.
 The `send()` configures the message, renders the `email/test` template and sends
 the message with a [configured transport](#smtp-sending-with-the-default-transport).
 
+For controllers, a controller plugin exist to proxy to the email service:
+
+```php
+public function sendAction()
+{
+    $this->email(array(
+        'to'       => 'bob@acme.com',
+        'subject'  => 'Just want to say hi',
+        'template' => 'email/test',
+    ));
+}
+```
+
 ### Additional options
 
 You can use, besides `to`, also `from`, `cc`, `bcc` and `reply_to`. For every
