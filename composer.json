@@ -1,6 +1,6 @@
 {
     "name": "soflomo/mail",
-    "description": "Small module to help with mail transport aware classes",
+    "description": "Module to to ease the use of sending e-mail messages in Zend Framework 2",
     "license": "BSD-3-Clause",
     "type": "library",
     "keywords": [
