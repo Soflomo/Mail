@@ -260,7 +260,17 @@ For more advanced usage, see how to configure your
 the API for various third party email providers like Mailgun, Postmark and
 Amazon SES.
 
-...
+All SlmMail transports are services in the service manager which you can use to
+inject in any other class. For Soflomo\Mail, set the alias to the SlmMail
+transport you use and it's automatically injected.
+
+```php
+'service_manager' => array(
+    'aliases' => array(
+        'Soflomo\Mail\Transport' => 'SlmMail\Mail\Transport\SendGridTransport',
+    ),
+),
+```
 
 ### Use your custom transport factory
 
