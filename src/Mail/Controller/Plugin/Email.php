@@ -47,39 +47,39 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
  */
 class Email extends AbstractPlugin
 {
-	protected $service;
+    protected $service;
 
-	/**
-	 * Constructor
-	 *
-	 * @param  MailService $service
-	 * @return Email
-	 */
-	public function __construct(MailService $service)
-	{
-		$this->service = $service;
-	}
+    /**
+     * Constructor
+     *
+     * @param  MailService $service
+     * @return Email
+     */
+    public function __construct(MailService $service)
+    {
+        $this->service = $service;
+    }
 
-	/**
-	 * Invoke the plugin by sending an email using configuration
-	 *
-	 * @param  array $options
-	 * @param  array $variables
-	 * @param  Message|null $message
-	 * @return void
-	 */
-	public function __invoke(array $options, array $variables, Message $message = null)
-	{
-		$this->getService()->send($options, $variables, $message);
-	}
+    /**
+     * Invoke the plugin by sending an email using configuration
+     *
+     * @param  array $options
+     * @param  array $variables
+     * @param  Message|null $message
+     * @return void
+     */
+    public function __invoke(array $options, array $variables, Message $message = null)
+    {
+        $this->getService()->send($options, $variables, $message);
+    }
 
-	/**
-	 * Get the email service class
-	 *
-	 * @return MailService
-	 */
-	protected function getService()
-	{
-		return $this->service;
-	}
+    /**
+     * Get the email service class
+     *
+     * @return MailService
+     */
+    protected function getService()
+    {
+        return $this->service;
+    }
 }
