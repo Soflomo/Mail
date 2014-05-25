@@ -38,6 +38,14 @@
  */
 
 return array(
+    'soflomo_mail' => array(
+        'message'    => array(
+            'encoding'  => 'UTF-8',
+        ),
+        'transport' => array(
+            'type'    => null,
+        ),
+    ),
     'service_manager' => array(
         'aliases' => array(
             'Soflomo\Mail\Renderer'  => 'ViewRenderer',
