@@ -41,6 +41,7 @@ namespace Soflomo\Mail\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Soflomo\Mail\Exception\RuntimeException;
 
 class DefaultTransportFactory implements FactoryInterface
 {
@@ -49,6 +50,10 @@ class DefaultTransportFactory implements FactoryInterface
         $config = $serviceLocator->get('config');
         $config = $config['soflomo_mail'];
         $name   = $config['transport']['type'];
+
+        if (is_null($name)) {
+            throw new RuntimeException('Please specify a mail transport type in your configuration');
+        }
 
         // Allow type as FQCN, defaults to Zend\Mail\Transport\* type
         if (!class_exists($name)) {
