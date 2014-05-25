@@ -38,33 +38,6 @@
  */
 
 return array(
-    'soflomo_mail' => array(
-        'message'    => array(
-            'from'      => '',
-            'from_name' => '',
-            'encoding'  => 'UTF-8',
-        ),
-
-        'transport' => array(
-            'type'    => 'smtp',
-            'options' => array(
-                'name' => 'gmail.com',
-                'host' => 'smtp.gmail.com',
-                'port' => 587,
-                'connection_class'  => 'login',
-                'connection_config' => array(
-                    'ssl'      => 'tls',
-                    'username' => '%USERNAME%',
-                    'password' => '%PASSWORD%',
-                ),
-            ),
-            'variables' => array(
-                'username' => '',
-                'password' => '',
-            ),
-        ),
-    ),
-
     'service_manager' => array(
         'aliases' => array(
             'Soflomo\Mail\Renderer'  => 'ViewRenderer',
