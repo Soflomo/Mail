@@ -249,6 +249,8 @@ The 'type' can be a class from `Zend\Mail\Transport\*` (so either "file", "smtp"
 or "sendmail"). The `options` array is used to instantiate an options object
 corresponding to the type (for "smtp" an `SmtpOptions` class is used).
 
+```soflomo_mail.global.php.dist``` has more examples of different transport types and configurations.
+
 Alternatively, give the type a FQCN and it utilizes that class for the transport.
 Be aware this FQCN is a simple solution and cannot implement dependency injection.
 For more advanced usage, see how to configure your

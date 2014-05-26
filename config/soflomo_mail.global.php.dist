@@ -44,7 +44,13 @@ return array(
             'from_name' => '',
             'encoding'  => 'UTF-8',
         ),
+        /**
+         * Below are examples on how to setup different transports.
+         */
 
+        /**
+         * Gmail SMTP
+         *
         'transport' => array(
             'type'    => 'smtp',
             'options' => array(
@@ -63,5 +69,27 @@ return array(
                 'password' => '',
             ),
         ),
+        */
+        /**
+         * SMTP without auth.
+         * Mailcatcher for example.
+         *
+        'transport' => array(
+            'type'    => 'smtp',
+            'options' => array(
+                'name' => 'mailcatcher',
+                'host' => '127.0.0.1',
+                'port' => 1025,
+                'connection_class'  => 'smtp',
+            ),
+        ),
+        */
+        /**
+         * Sendmail
+         *
+        'transport' => array(
+            'type'    => 'sendmail',
+        ),
+        */
     ),
 );
