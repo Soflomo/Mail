@@ -50,7 +50,7 @@ return array(
 
         /**
          * Gmail SMTP
-         */
+         *
         'transport' => array(
             'type'    => 'smtp',
             'options' => array(
@@ -69,10 +69,11 @@ return array(
                 'password' => '',
             ),
         ),
+        */
         /**
          * SMTP without auth.
          * Mailcatcher for example.
-         */
+         *
         'transport' => array(
             'type'    => 'smtp',
             'options' => array(
@@ -82,11 +83,13 @@ return array(
                 'connection_class'  => 'smtp',
             ),
         ),
+        */
         /**
          * Sendmail
-         */
+         *
         'transport' => array(
             'type'    => 'sendmail',
         ),
+        */
     ),
 );
