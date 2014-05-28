@@ -68,7 +68,7 @@ class Email extends AbstractPlugin
      * @param  Message|null $message
      * @return void
      */
-    public function __invoke(array $options, array $variables, Message $message = null)
+    public function __invoke(array $options, array $variables = array(), Message $message = null)
     {
         $this->getService()->send($options, $variables, $message);
     }
