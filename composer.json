@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Soflomo\\Mail": "src/"
+            "Soflomo\\Mail\\": "src/"
         },
         "classmap": [
             "./Module.php"
