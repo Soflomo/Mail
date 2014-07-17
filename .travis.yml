@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+  - hhvm
+  - hhvm-nightly
+
+before_script:
+  - composer self-update
+  - composer update --prefer-source
+
+script:
+  - ./vendor/bin/phpunit
+  - ./vendor/bin/phpcs --standard=PSR2 ./src/ ./tests/
+
+notifications:
+  irc: "irc.freenode.org#zftalk.modules"
