@@ -1,6 +1,12 @@
 Soflomo\Mail
 ============
 
+[![Latest Stable Version](https://poser.pugx.org/soflomo/mail/v/stable.png)](https://packagist.org/packages/soflomo/mail)
+[![Build Status](https://travis-ci.org/Soflomo/Mail.svg?branch=master)](https://travis-ci.org/Soflomo/Mail)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Soflomo/Mail/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Soflomo/Mail/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/Soflomo/Mail/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Soflomo/Mail/?branch=master)
+[![Dependency Status](https://www.versioneye.com/user/projects/53c7e5820dd4210af000001b/badge.svg?style=flat)](https://www.versioneye.com/user/projects/53c7e5820dd4210af000001b)
+
 Soflomo\Mail is a facade module that integrates various components to send
 e-mails in Zend Framework 2. It allows users to compose messages, render
 templates and configure transports in one call. Every component is loosly
