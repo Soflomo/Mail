@@ -70,8 +70,11 @@ class MailService
      * @param  Message|null $defaultMessage
      * @return MailService
      */
-    public function __construct(TransportInterface $transport, RendererInterface $renderer, Message $defaultMessage = null)
-    {
+    public function __construct(
+        TransportInterface $transport,
+        RendererInterface $renderer,
+        Message $defaultMessage = null
+    ) {
         $this->transport = $transport;
         $this->renderer  = $renderer;
 
@@ -120,7 +123,7 @@ class MailService
         }
 
         $this->prepareMessage($message, $options);
-        $this->renderBody($message, $options,$variables);
+        $this->renderBody($message, $options, $variables);
 
         if (array_key_exists('attachments', $options)) {
             $this->addAttachments($message, $options);

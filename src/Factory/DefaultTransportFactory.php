@@ -71,7 +71,7 @@ class DefaultTransportFactory implements FactoryInterface
 
                 // Make sure every key in variables is %KEY_NAME% format
                 $variables = array_flip($variables);
-                $variables = array_map(function($value) {
+                $variables = array_map(function ($value) {
                     return '%' . strtoupper($value) . '%';
                 }, $variables);
                 $variables = array_flip($variables);
