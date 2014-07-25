@@ -176,6 +176,11 @@ class MailService
 
         $address = $options[$type];
         $method  = 'set' . ucfirst($type);
+        if ($type === 'reply_to') {
+            // Do not use the full blown underscore-to-camelcase converter
+            // Simply replace the only type "reply_to"
+            $method = 'setReplyTo';
+        }
 
         // We only have a single address in the list
         if (!is_array($address)) {
