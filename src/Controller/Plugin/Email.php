@@ -40,6 +40,7 @@
 namespace Soflomo\Mail\Controller\Plugin;
 
 use Soflomo\Mail\Service\MailService;
+use Zend\Mail\Message;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
 /**
