@@ -4,20 +4,20 @@ php:
   - 5.3
   - 5.4
   - 5.5
-  - hhvm
-  - hhvm-nightly
 
 before_script:
   - composer self-update
   - composer update --prefer-source
+  - mkdir -p tests/build/logs
 
 script:
-  - ./vendor/bin/phpunit --coverage-clover=coverage.clover
-  - ./vendor/bin/phpcs --standard=PSR2 ./src/ ./tests/
+  - ./vendor/bin/phpunit -c ./phpunit.xml
+  - ./vendor/bin/phpcs --standard=PSR2 ./src/
 
 notifications:
   irc: "irc.freenode.org#zftalk.modules"
+  email: false
 
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - php ocular.phar code-coverage:upload --format=php-clover tests/build/logs/clover.xml

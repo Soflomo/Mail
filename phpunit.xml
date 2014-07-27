@@ -8,6 +8,7 @@
     verbose="true"
     stopOnFailure="false"
     processIsolation="false"
+    backupGlobals="false"
     syntaxCheck="true"
 >
     <testsuite name="Soflomo\Mail tests">
@@ -18,4 +19,8 @@
             <directory suffix=".php">./src</directory>
         </whitelist>
     </filter>
+
+    <logging>
+        <log type="cloverage-clover" target="./tests/build/logs/clover.xml"/>
+    </logging>
 </phpunit>
