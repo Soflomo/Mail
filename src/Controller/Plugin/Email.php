@@ -39,7 +39,7 @@
 
 namespace Soflomo\Mail\Controller\Plugin;
 
-use Soflomo\Mail\Service\MailService;
+use Soflomo\Mail\Service\MailServiceInterface;
 use Zend\Mail\Message;
 use Zend\Mvc\Controller\Plugin\AbstractPlugin;
 
@@ -48,15 +48,18 @@ use Zend\Mvc\Controller\Plugin\AbstractPlugin;
  */
 class Email extends AbstractPlugin
 {
+    /**
+     * @var MailServiceInterface
+     */
     protected $service;
 
     /**
      * Constructor
      *
-     * @param  MailService $service
+     * @param  MailServiceInterface $service
      * @return Email
      */
-    public function __construct(MailService $service)
+    public function __construct(MailServiceInterface $service)
     {
         $this->service = $service;
     }
@@ -77,7 +80,7 @@ class Email extends AbstractPlugin
     /**
      * Get the email service class
      *
-     * @return MailService
+     * @return MailServiceInterface
      */
     protected function getService()
     {
