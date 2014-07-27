@@ -43,17 +43,23 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Soflomo\Mail\Service\MailService;
 use SoflomoTest\Mail\Util\ServiceManagerFactory;
 use SoflomoTest\Mail\Util\TestTransport;
-use Zend\View\Renderer\PhpRenderer;
+use Zend\Mail\Message;
 
 class MailServiceTest extends TestCase
 {
     protected $renderer;
     protected $transport;
+    protected $defaultOptions;
 
     public function setUp()
     {
-        $this->renderer  = new PhpRenderer;
+        $this->renderer  = $this->getMock('Zend\View\Renderer\RendererInterface');
         $this->transport = new TestTransport;
+        $this->defaultOptions = array(
+            'to'       => 'john@acme.org',
+            'subject'  => 'This is a test',
+            'template' => 'foo/bar/baz'
+        );
     }
 
     public function testCanCreateInstance()
@@ -61,5 +67,39 @@ class MailServiceTest extends TestCase
         $service = new MailService($this->transport, $this->renderer);
 
         $this->assertInstanceOf('Soflomo\Mail\Service\MailService', $service);
+    }
+
+    public function testServiceSendsMessageWithTransport()
+    {
+        $service = new MailService($this->transport, $this->renderer);
+        $service->send($this->defaultOptions);
+
+        $message = $this->transport->getLastMessage();
+        $this->assertInstanceOf('Zend\Mail\Message', $message);
+    }
+
+    public function testUsesDefaultMessageFromConstructor()
+    {
+        $defaultMessage = new Message;
+        $defaultMessage->setFrom('alice@acme.org', 'Alice');
+        $service        = new MailService($this->transport, $this->renderer, $defaultMessage);
+        $service->send($this->defaultOptions);
+
+        $message = $this->transport->getLastMessage();
+
+        // We compare the == of objects, since they are not the same instance
+        $this->assertEquals($defaultMessage, $message);
+        $equals = (spl_object_hash($defaultMessage) === spl_object_hash($message));
+        $this->assertFalse($equals);
+    }
+
+    public function testUsesDefaultMessageFromSendMethod()
+    {
+        $defaultMessage = new Message;
+        $service        = new MailService($this->transport, $this->renderer);
+        $service->send($this->defaultOptions, array(), $defaultMessage);
+
+        $message = $this->transport->getLastMessage();
+        $this->assertEquals(spl_object_hash($defaultMessage), spl_object_hash($message));
     }
 }
