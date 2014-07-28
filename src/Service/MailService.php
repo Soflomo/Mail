@@ -160,10 +160,7 @@ class MailService implements MailServiceInterface
             return;
         }
 
-        // We have a list of addresses, assume 'email' => 'name'
-        foreach ($address as $email => $name) {
-            $message->$method($email, $name);
-        }
+        $message->$method($address);
     }
 
     /**
