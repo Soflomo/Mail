@@ -60,18 +60,18 @@ class MailServiceTest extends TestCase
             'subject'  => 'This is a test',
             'template' => 'foo/bar/baz'
         );
+        $this->service = new MailService($this->transport, $this->renderer);
     }
 
     public function testCanCreateInstance()
     {
-        $service = new MailService($this->transport, $this->renderer);
-
+        $service = $this->service;
         $this->assertInstanceOf('Soflomo\Mail\Service\MailService', $service);
     }
 
     public function testServiceSendsMessageWithTransport()
     {
-        $service = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions);
 
         $message = $this->transport->getLastMessage();
@@ -97,7 +97,7 @@ class MailServiceTest extends TestCase
     public function testUsesDefaultMessageFromSendMethod()
     {
         $defaultMessage = new Message;
-        $service        = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions, array(), $defaultMessage);
 
         $message = $this->transport->getLastMessage();
@@ -106,7 +106,7 @@ class MailServiceTest extends TestCase
 
     public function testServiceSetsMessageToAddress()
     {
-        $service = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions);
 
         $message = $this->transport->getLastMessage();
@@ -123,7 +123,7 @@ class MailServiceTest extends TestCase
 
     public function testServiceHandlesMultipleToAddresses()
     {
-        $service = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send(array(
             'to' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice'),
             'subject'  => 'This is a test',
@@ -144,7 +144,7 @@ class MailServiceTest extends TestCase
 
     public function testServiceSetsSubjectLineToMessage()
     {
-        $service = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions);
 
         $message = $this->transport->getLastMessage();
@@ -158,7 +158,7 @@ class MailServiceTest extends TestCase
                        ->with('foo/bar/baz')
                        ->will($this->returnValue('Hello World'));
 
-        $service = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions);
 
         $message = $this->transport->getLastMessage();
