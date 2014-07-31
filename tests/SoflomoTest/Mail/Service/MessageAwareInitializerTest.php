@@ -37,19 +37,48 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-namespace Soflomo\Mail\Service;
+namespace SoflomoTest\Mail\Service;
 
-use Soflomo\Mail\Mail\MessageAwareInterface;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use PHPUnit_Framework_TestCase as TestCase;
+use Soflomo\Mail\Service\MessageAwareInitializer;
+use SoflomoTest\Mail\Util\ServiceManagerFactory;
 
-class MessageAwareInitializer implements InitializerInterface
+class MessageAwareInitializerTest extends TestCase
 {
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    protected $serviceManager;
+    protected $initializer;
+
+    public function setUp()
     {
-        if ($instance instanceof MessageAwareInterface) {
-            $message = $serviceLocator->get('Soflomo\Mail\Message');
-            $instance->setMessage($message);
-        }
+        $this->serviceManager = ServiceManagerFactory::getServiceManager();
+        $this->initializer    = new MessageAwareInitializer;
+        $this->serviceManager->addInitializer($this->initializer);
+        $this->serviceManager->setInvokableClass('TestService', 'SoflomoTest\Mail\Asset\MessageAwareService');
+    }
+
+    public function testInitializerInjectsMessage()
+    {
+        $instance = $this->serviceManager->get('TestService');
+        $this->assertInstanceOf('Soflomo\Mail\Mail\MessageAwareInterface', $instance);
+
+        $message = $instance->getLastMessage();
+        $this->assertInstanceOf('Zend\Mail\Message', $message);
+    }
+
+    public function testInitializerDoesNotUseSharedMessage()
+    {
+        $this->serviceManager->setInvokableClass('TestService2', 'SoflomoTest\Mail\Asset\MessageAwareService');
+
+        $instance1 = $this->serviceManager->get('TestService');
+        $message1  = $instance1->getLastMessage();
+
+        $instance2 = $this->serviceManager->get('TestService2');
+        $message2  = $instance2->getLastMessage();
+
+        $this->assertInstanceOf('Zend\Mail\Message', $message1);
+        $this->assertInstanceOf('Zend\Mail\Message', $message2);
+
+        $equals = (spl_object_hash($message1) === spl_object_hash($message2));
+        $this->assertFalse($equals);
     }
 }

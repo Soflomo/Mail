@@ -39,7 +39,7 @@
 
 namespace Soflomo\Mail\Service;
 
-use Soflomo\Mail\TransportAwareInterface;
+use Soflomo\Mail\Mail\TransportAwareInterface;
 use Zend\ServiceManager\InitializerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 

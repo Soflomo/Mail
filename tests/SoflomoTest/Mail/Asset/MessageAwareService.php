@@ -37,19 +37,17 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-namespace Soflomo\Mail\Service;
+namespace SoflomoTest\Mail\Asset;
 
 use Soflomo\Mail\Mail\MessageAwareInterface;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Soflomo\Mail\Mail\MessageAwareTrait;
 
-class MessageAwareInitializer implements InitializerInterface
+class MessageAwareService implements MessageAwareInterface
 {
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    use MessageAwareTrait;
+
+    public function getLastMessage()
     {
-        if ($instance instanceof MessageAwareInterface) {
-            $message = $serviceLocator->get('Soflomo\Mail\Message');
-            $instance->setMessage($message);
-        }
+        return $this->getMessage();
     }
 }
