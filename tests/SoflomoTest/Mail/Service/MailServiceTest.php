@@ -104,6 +104,9 @@ class MailServiceTest extends TestCase
         $this->assertEquals(spl_object_hash($defaultMessage), spl_object_hash($message));
     }
 
+    /**
+     * @todo Test from/to/cc/bcc address
+     */
     public function testServiceSetsMessageToAddress()
     {
         $service = $this->service;
@@ -121,6 +124,9 @@ class MailServiceTest extends TestCase
         $this->assertEquals('John Doe', $message->getTo()->current()->getName());
     }
 
+    /**
+     * @todo Test from/to/cc/bcc addresses
+     */
     public function testServiceHandlesMultipleToAddresses()
     {
         $service = $this->service;
