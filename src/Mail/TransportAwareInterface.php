@@ -37,19 +37,11 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-namespace Soflomo\Mail\Service;
+namespace Soflomo\Mail\Mail;
 
-use Soflomo\Mail\Mail\MessageAwareInterface;
-use Zend\ServiceManager\InitializerInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Mail\Transport\TransportInterface;
 
-class MessageAwareInitializer implements InitializerInterface
+interface TransportAwareInterface
 {
-    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
-    {
-        if ($instance instanceof MessageAwareInterface) {
-            $message = $serviceLocator->get('Soflomo\Mail\Message');
-            $instance->setMessage($message);
-        }
-    }
+    public function setTransport(TransportInterface $transport);
 }

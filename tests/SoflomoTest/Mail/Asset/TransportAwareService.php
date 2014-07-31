@@ -37,22 +37,17 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-namespace SoflomoTest\Mail\Util;
+namespace SoflomoTest\Mail\Asset;
 
-use Zend\Mail\Transport\TransportInterface;
-use Zend\Mail\Message;
+use Soflomo\Mail\Mail\TransportAwareInterface;
+use Soflomo\Mail\Mail\TransportAwareTrait;
 
-class TestTransport implements TransportInterface
+class TransportAwareService implements TransportAwareInterface
 {
-    protected $message;
+    use TransportAwareTrait;
 
-    public function send(Message $message)
+    public function getLastTransport()
     {
-        $this->message = $message;
-    }
-
-    public function getLastMessage()
-    {
-        return $this->message;
+        return $this->getTransport();
     }
 }

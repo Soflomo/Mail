@@ -41,8 +41,7 @@ namespace SoflomoTest\Mail\Service;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Soflomo\Mail\Service\MailService;
-use SoflomoTest\Mail\Util\ServiceManagerFactory;
-use SoflomoTest\Mail\Util\TestTransport;
+use SoflomoTest\Mail\Asset\SimpleTransport;
 use Zend\Mail\Message;
 
 class MailServiceTest extends TestCase
@@ -54,7 +53,7 @@ class MailServiceTest extends TestCase
     public function setUp()
     {
         $this->renderer  = $this->getMock('Zend\View\Renderer\RendererInterface');
-        $this->transport = new TestTransport;
+        $this->transport = new SimpleTransport;
         $this->defaultOptions = array(
             'to'       => 'john@acme.org',
             'subject'  => 'This is a test',
