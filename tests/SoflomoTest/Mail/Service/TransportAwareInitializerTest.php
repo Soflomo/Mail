@@ -50,6 +50,13 @@ class TransportAwareInitializerTest extends TestCase
 
     public function setUp()
     {
+        if (version_compare(phpversion() , '5.4', 'lt')) {
+            $this->markTestSkipped(
+                'Traits are not available in PHP 5.3.'
+            );
+            return;
+        }
+
         $this->serviceManager = ServiceManagerFactory::getServiceManager();
         $this->initializer    = new TransportAwareInitializer;
         $this->serviceManager->addInitializer($this->initializer);
