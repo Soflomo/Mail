@@ -7,17 +7,17 @@ php:
 
 before_script:
   - composer self-update
-  - composer update --prefer-source
+  - composer install --dev --prefer-source
   - mkdir -p tests/build/logs
 
 script:
   - ./vendor/bin/phpunit -c ./phpunit.xml
   - ./vendor/bin/phpcs --standard=PSR2 ./src/
 
-notifications:
-  irc: "irc.freenode.org#zftalk.modules"
-  email: false
-
 after_script:
   - wget https://scrutinizer-ci.com/ocular.phar
   - php ocular.phar code-coverage:upload --format=php-clover tests/build/logs/clover.xml
+
+notifications:
+  irc: "irc.freenode.org#zftalk.modules"
+  email: false
