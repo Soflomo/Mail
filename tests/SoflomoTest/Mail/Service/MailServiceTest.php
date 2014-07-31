@@ -170,4 +170,20 @@ class MailServiceTest extends TestCase
         $message = $this->transport->getLastMessage();
         $this->assertContains('Hello World', $message->getBody());
     }
+
+    public function testServiceAddsCustomHeader()
+    {
+        $service = $this->service;
+        $service->send($this->defaultOptions + array(
+            'headers' => array(
+                'X-Foo' => 'Bar',
+            ),
+        ));
+
+        $message = $this->transport->getLastMessage();
+        $headers = $message->getHeaders();
+
+        $this->assertTrue($headers->has('X-Foo'));
+        $this->assertEquals('Bar', $headers->get('X-Foo')->getFieldValue());
+    }
 }
