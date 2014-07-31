@@ -60,25 +60,25 @@ class MailServiceTest extends TestCase
             'subject'  => 'This is a test',
             'template' => 'foo/bar/baz'
         );
+        $this->service = new MailService($this->transport, $this->renderer);
     }
 
     public function testCanCreateInstance()
     {
-        $service = new MailService($this->transport, $this->renderer);
-
+        $service = $this->service;
         $this->assertInstanceOf('Soflomo\Mail\Service\MailService', $service);
     }
 
     public function testServiceSendsMessageWithTransport()
     {
-        $service = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions);
 
         $message = $this->transport->getLastMessage();
         $this->assertInstanceOf('Zend\Mail\Message', $message);
     }
 
-    public function testUsesDefaultMessageFromConstructor()
+    public function testClonesDefaultMessageFromConstructor()
     {
         $defaultMessage = new Message;
         $defaultMessage->setFrom('alice@acme.org', 'Alice');
@@ -87,8 +87,9 @@ class MailServiceTest extends TestCase
 
         $message = $this->transport->getLastMessage();
 
-        // We compare the == of objects, since they are not the same instance
+        // We compare the equality of objects, since they should not be the same instance
         $this->assertEquals($defaultMessage, $message);
+
         $equals = (spl_object_hash($defaultMessage) === spl_object_hash($message));
         $this->assertFalse($equals);
     }
@@ -96,10 +97,93 @@ class MailServiceTest extends TestCase
     public function testUsesDefaultMessageFromSendMethod()
     {
         $defaultMessage = new Message;
-        $service        = new MailService($this->transport, $this->renderer);
+        $service = $this->service;
         $service->send($this->defaultOptions, array(), $defaultMessage);
 
         $message = $this->transport->getLastMessage();
         $this->assertEquals(spl_object_hash($defaultMessage), spl_object_hash($message));
+    }
+
+    /**
+     * @todo Test from/to/cc/bcc address
+     */
+    public function testServiceSetsMessageToAddress()
+    {
+        $service = $this->service;
+        $service->send($this->defaultOptions);
+
+        $message = $this->transport->getLastMessage();
+        $this->assertEquals('john@acme.org', $message->getTo()->current()->getEmail());
+
+        $service->send($this->defaultOptions + array(
+            'to_name' => 'John Doe',
+        ));
+
+        $message = $this->transport->getLastMessage();
+        $this->assertEquals('john@acme.org', $message->getTo()->current()->getEmail());
+        $this->assertEquals('John Doe', $message->getTo()->current()->getName());
+    }
+
+    /**
+     * @todo Test from/to/cc/bcc addresses
+     */
+    public function testServiceHandlesMultipleToAddresses()
+    {
+        $service = $this->service;
+        $service->send(array(
+            'to' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice'),
+            'subject'  => 'This is a test',
+            'template' => 'foo/bar/baz'
+        ));
+
+        $message = $this->transport->getLastMessage();
+        $this->assertEquals(2, $message->getTo()->count());
+
+        $address1 = $message->getTo()->rewind();
+        $this->assertEquals('bob@acme.org', $address1->getEmail());
+        $this->assertEquals('Bob', $address1->getName());
+
+        $address2 = $message->getTo()->next();
+        $this->assertEquals('alice@acme.org', $address2->getEmail());
+        $this->assertEquals('Alice', $address2->getName());
+    }
+
+    public function testServiceSetsSubjectLineToMessage()
+    {
+        $service = $this->service;
+        $service->send($this->defaultOptions);
+
+        $message = $this->transport->getLastMessage();
+        $this->assertEquals('This is a test', $message->getSubject());
+    }
+
+    public function testServiceRendersTemplateByRenderer()
+    {
+        $this->renderer->expects($this->once())
+                       ->method('render')
+                       ->with('foo/bar/baz')
+                       ->will($this->returnValue('Hello World'));
+
+        $service = $this->service;
+        $service->send($this->defaultOptions);
+
+        $message = $this->transport->getLastMessage();
+        $this->assertContains('Hello World', $message->getBody());
+    }
+
+    public function testServiceAddsCustomHeader()
+    {
+        $service = $this->service;
+        $service->send($this->defaultOptions + array(
+            'headers' => array(
+                'X-Foo' => 'Bar',
+            ),
+        ));
+
+        $message = $this->transport->getLastMessage();
+        $headers = $message->getHeaders();
+
+        $this->assertTrue($headers->has('X-Foo'));
+        $this->assertEquals('Bar', $headers->get('X-Foo')->getFieldValue());
     }
 }
