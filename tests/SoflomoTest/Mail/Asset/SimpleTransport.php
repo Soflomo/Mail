@@ -37,12 +37,12 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-namespace SoflomoTest\Mail\Util;
+namespace SoflomoTest\Mail\Asset;
 
 use Zend\Mail\Transport\TransportInterface;
 use Zend\Mail\Message;
 
-class TestTransport implements TransportInterface
+class SimpleTransport implements TransportInterface
 {
     protected $message;
 
