@@ -109,6 +109,27 @@ class DefaultTransportFactoryTest extends TestCase
         $this->assertEquals('Foo', $options->getName());
     }
 
+    public function testFactoryAllowsVariablesInOptions()
+    {
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+
+        $config    = $serviceManager->get('config');
+        $options   = array('name' => '%FOO%');
+        $variables = array('foo'  => 'Bar');
+        $config['soflomo_mail']['transport']['type']      = 'Smtp';
+        $config['soflomo_mail']['transport']['options']   = $options;
+        $config['soflomo_mail']['transport']['variables'] = $variables;
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('config', $config);
+        $serviceManager->setAllowOverride(false);
+
+        $transport = $serviceManager->get('Soflomo\Mail\Transport');
+        $this->assertInstanceof('Zend\Mail\Transport\Smtp', $transport);
+
+        $options = $transport->getOptions();
+        $this->assertEquals('Bar', $options->getName());
+    }
+
     public function testFactoryAllowsFqcnAsType()
     {
         $serviceManager = ServiceManagerFactory::getServiceManager();
