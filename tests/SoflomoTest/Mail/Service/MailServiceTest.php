@@ -248,4 +248,12 @@ class MailServiceTest extends TestCase
         $this->assertTrue($headers->has('X-Foo'));
         $this->assertEquals('Bar', $headers->get('X-Foo')->getFieldValue());
     }
+
+    public function testServiceRequiresHeadersToBeAnArray()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $service->send($this->defaultOptions + array('headers' => 'string'));
+    }
 }
