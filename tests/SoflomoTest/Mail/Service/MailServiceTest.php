@@ -256,4 +256,12 @@ class MailServiceTest extends TestCase
         $service = $this->service;
         $service->send($this->defaultOptions + array('headers' => 'string'));
     }
+
+    public function testServiceThrowsExceptionForUnimplementedAttachment()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\NotImplementedException');
+
+        $service = $this->service;
+        $service->send($this->defaultOptions + array('attachments' => array()));
+    }
 }
