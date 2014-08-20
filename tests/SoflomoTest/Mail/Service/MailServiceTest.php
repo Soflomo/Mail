@@ -103,6 +103,16 @@ class MailServiceTest extends TestCase
         $this->assertEquals(spl_object_hash($defaultMessage), spl_object_hash($message));
     }
 
+    public function testServiceRequiresToOption()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $options = $this->defaultOptions;
+        unset($options['to']);
+        $service->send($options);
+    }
+
     /**
      * @todo Test from/to/cc/bcc address
      */
@@ -147,6 +157,16 @@ class MailServiceTest extends TestCase
         $this->assertEquals('Alice', $address2->getName());
     }
 
+    public function testServiceRequiresSubjectOption()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $options = $this->defaultOptions;
+        unset($options['subject']);
+        $service->send($options);
+    }
+
     public function testServiceSetsSubjectLineToMessage()
     {
         $service = $this->service;
@@ -154,6 +174,16 @@ class MailServiceTest extends TestCase
 
         $message = $this->transport->getLastMessage();
         $this->assertEquals('This is a test', $message->getSubject());
+    }
+
+    public function testServiceRequiresTemplateOption()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $options = $this->defaultOptions;
+        unset($options['template']);
+        $service->send($options);
     }
 
     public function testServiceRendersTemplateByRenderer()
