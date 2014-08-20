@@ -41,6 +41,7 @@ namespace SoflomoTest\Mail\Service;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use SoflomoTest\Mail\Util\ServiceManagerFactory;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 
 class DefaultTransportFactoryTest extends TestCase
 {
@@ -53,6 +54,26 @@ class DefaultTransportFactoryTest extends TestCase
         $transport      = $serviceManager->get('Soflomo\Mail\Transport');
 
         $this->assertInstanceOf('Zend\Mail\Transport\TransportInterface', $transport);
+    }
+
+    public function testFactoryRequiresTypeFromConfig()
+    {
+        $this->setExpectedException('Zend\ServiceManager\Exception\ServiceNotCreatedException');
+
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+        $transport      = $serviceManager->get('Soflomo\Mail\Transport');
+    }
+
+    public function testFactoryThrowsRuntimeExceptionForMissingType()
+    {
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+
+        try {
+            $transport = $serviceManager->get('Soflomo\Mail\Transport');
+        } catch (ServiceNotCreatedException $e) {
+            $previous = $e->getPrevious();
+            $this->assertInstanceOf('Soflomo\Mail\Exception\RuntimeException', $previous);
+        }
     }
 
     public function testFactorySetsTypeFromConfig()
