@@ -200,6 +200,39 @@ class MailServiceTest extends TestCase
         $this->assertContains('Hello World', $message->getBody());
     }
 
+    public function testServiceCreatesMultiMimeMessageForTextAndHtml()
+    {
+        $this->renderer->expects($this->at(0))
+                       ->method('render')
+                       ->with('foo/bar/baz')
+                       ->will($this->returnValue('<p>Hello World</p>'));
+
+        $this->renderer->expects($this->at(1))
+                       ->method('render')
+                       ->with('foo/bar/baz_text')
+                       ->will($this->returnValue('Hello World'));
+
+        $service = $this->service;
+        $service->send($this->defaultOptions + array('template_text' => 'foo/bar/baz_text'));
+
+        $message = $this->transport->getLastMessage();
+        $body    = $message->getBody();
+        $this->assertInstanceOf('Zend\Mime\Message', $body);
+
+        $parts = $body->getParts();
+        $text  = $parts[0];
+        $html  = $parts[1];
+
+        $this->assertInstanceOf('Zend\Mime\Part', $text);
+        $this->assertInstanceOf('Zend\Mime\Part', $html);
+
+        $this->assertEquals('text/plain', $text->type);
+        $this->assertEquals('text/html', $html->type);
+
+        $this->assertEquals('Hello World', $text->getRawContent());
+        $this->assertEquals('<p>Hello World</p>', $html->getRawContent());
+    }
+
     public function testServiceAddsCustomHeader()
     {
         $service = $this->service;
