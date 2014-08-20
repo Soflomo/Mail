@@ -103,6 +103,16 @@ class MailServiceTest extends TestCase
         $this->assertEquals(spl_object_hash($defaultMessage), spl_object_hash($message));
     }
 
+    public function testServiceRequiresToOption()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $options = $this->defaultOptions;
+        unset($options['to']);
+        $service->send($options);
+    }
+
     /**
      * @todo Test from/to/cc/bcc address
      */
@@ -147,6 +157,16 @@ class MailServiceTest extends TestCase
         $this->assertEquals('Alice', $address2->getName());
     }
 
+    public function testServiceRequiresSubjectOption()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $options = $this->defaultOptions;
+        unset($options['subject']);
+        $service->send($options);
+    }
+
     public function testServiceSetsSubjectLineToMessage()
     {
         $service = $this->service;
@@ -154,6 +174,16 @@ class MailServiceTest extends TestCase
 
         $message = $this->transport->getLastMessage();
         $this->assertEquals('This is a test', $message->getSubject());
+    }
+
+    public function testServiceRequiresTemplateOption()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $options = $this->defaultOptions;
+        unset($options['template']);
+        $service->send($options);
     }
 
     public function testServiceRendersTemplateByRenderer()
@@ -170,6 +200,39 @@ class MailServiceTest extends TestCase
         $this->assertContains('Hello World', $message->getBody());
     }
 
+    public function testServiceCreatesMultiMimeMessageForTextAndHtml()
+    {
+        $this->renderer->expects($this->at(0))
+                       ->method('render')
+                       ->with('foo/bar/baz')
+                       ->will($this->returnValue('<p>Hello World</p>'));
+
+        $this->renderer->expects($this->at(1))
+                       ->method('render')
+                       ->with('foo/bar/baz_text')
+                       ->will($this->returnValue('Hello World'));
+
+        $service = $this->service;
+        $service->send($this->defaultOptions + array('template_text' => 'foo/bar/baz_text'));
+
+        $message = $this->transport->getLastMessage();
+        $body    = $message->getBody();
+        $this->assertInstanceOf('Zend\Mime\Message', $body);
+
+        $parts = $body->getParts();
+        $text  = $parts[0];
+        $html  = $parts[1];
+
+        $this->assertInstanceOf('Zend\Mime\Part', $text);
+        $this->assertInstanceOf('Zend\Mime\Part', $html);
+
+        $this->assertEquals('text/plain', $text->type);
+        $this->assertEquals('text/html', $html->type);
+
+        $this->assertEquals('Hello World', $text->getRawContent());
+        $this->assertEquals('<p>Hello World</p>', $html->getRawContent());
+    }
+
     public function testServiceAddsCustomHeader()
     {
         $service = $this->service;
@@ -184,5 +247,21 @@ class MailServiceTest extends TestCase
 
         $this->assertTrue($headers->has('X-Foo'));
         $this->assertEquals('Bar', $headers->get('X-Foo')->getFieldValue());
+    }
+
+    public function testServiceRequiresHeadersToBeAnArray()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\InvalidArgumentException');
+
+        $service = $this->service;
+        $service->send($this->defaultOptions + array('headers' => 'string'));
+    }
+
+    public function testServiceThrowsExceptionForUnimplementedAttachment()
+    {
+        $this->setExpectedException('Soflomo\Mail\Exception\NotImplementedException');
+
+        $service = $this->service;
+        $service->send($this->defaultOptions + array('attachments' => array()));
     }
 }

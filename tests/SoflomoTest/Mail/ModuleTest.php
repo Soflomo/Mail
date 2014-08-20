@@ -37,19 +37,33 @@
  * @license     http://www.opensource.org/licenses/bsd-license.php  BSD License
  */
 
-if (
-    !($loader = @include __DIR__ . '/../vendor/autoload.php')
-    && !($loader = @include __DIR__ . '/../../../autoload.php')
-) {
-    throw new RuntimeException('vendor/autoload.php could not be found. Did you run `php composer.phar install`?');
+namespace SoflomoTest\Mail\Service;
+
+use PHPUnit_Framework_TestCase as TestCase;
+use Soflomo\Mail\Module;
+use Zend\Loader;
+
+class ModuleTest extends TestCase
+{
+    public function testModuleProvidesConfig()
+    {
+        $module = new Module;
+        $config = $module->getConfig();
+
+        $this->assertEquals('array', gettype($config));
+    }
+
+    public function testModuleAutoloader()
+    {
+        $module   = new Module;
+        $actual   = $module->getAutoloaderConfig();
+        $expected = array(
+            Loader\AutoloaderFactory::STANDARD_AUTOLOADER => array(
+                Loader\StandardAutoloader::LOAD_NS => array(
+                    'Soflomo\Mail' => realpath(__DIR__ . '/../../../src/Mail') . '/',
+                ),
+            ),
+        );
+        $this->assertEquals($expected, $actual);
+    }
 }
-
-/* @var $loader \Composer\Autoload\ClassLoader */
-$loader->add('SoflomoTest\\Mail\\', __DIR__);
-$loader->addClassMap(array('Soflomo\Mail\Module' => __DIR__ . '/../Module.php'));
-
-if (!$config = @include __DIR__ . '/TestConfiguration.php') {
-    $config = require __DIR__ . '/TestConfiguration.php.dist';
-}
-
-SoflomoTest\Mail\Util\ServiceManagerFactory::setConfig($config);

@@ -41,6 +41,7 @@ namespace SoflomoTest\Mail\Service;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use SoflomoTest\Mail\Util\ServiceManagerFactory;
+use Zend\ServiceManager\Exception\ServiceNotCreatedException;
 
 class DefaultTransportFactoryTest extends TestCase
 {
@@ -53,6 +54,26 @@ class DefaultTransportFactoryTest extends TestCase
         $transport      = $serviceManager->get('Soflomo\Mail\Transport');
 
         $this->assertInstanceOf('Zend\Mail\Transport\TransportInterface', $transport);
+    }
+
+    public function testFactoryRequiresTypeFromConfig()
+    {
+        $this->setExpectedException('Zend\ServiceManager\Exception\ServiceNotCreatedException');
+
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+        $transport      = $serviceManager->get('Soflomo\Mail\Transport');
+    }
+
+    public function testFactoryThrowsRuntimeExceptionForMissingType()
+    {
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+
+        try {
+            $transport = $serviceManager->get('Soflomo\Mail\Transport');
+        } catch (ServiceNotCreatedException $e) {
+            $previous = $e->getPrevious();
+            $this->assertInstanceOf('Soflomo\Mail\Exception\RuntimeException', $previous);
+        }
     }
 
     public function testFactorySetsTypeFromConfig()
@@ -86,6 +107,44 @@ class DefaultTransportFactoryTest extends TestCase
 
         $options = $transport->getOptions();
         $this->assertEquals('Foo', $options->getName());
+    }
+
+    public function testFactoryAllowsVariablesInOptions()
+    {
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+
+        $config    = $serviceManager->get('config');
+        $options   = array('name' => '%FOO%');
+        $variables = array('foo'  => 'Bar');
+        $config['soflomo_mail']['transport']['type']      = 'Smtp';
+        $config['soflomo_mail']['transport']['options']   = $options;
+        $config['soflomo_mail']['transport']['variables'] = $variables;
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('config', $config);
+        $serviceManager->setAllowOverride(false);
+
+        $transport = $serviceManager->get('Soflomo\Mail\Transport');
+        $options = $transport->getOptions();
+        $this->assertEquals('Bar', $options->getName());
+    }
+
+    public function testFactoryAllowsVariablesInChildOptions()
+    {
+        $serviceManager = ServiceManagerFactory::getServiceManager();
+
+        $config    = $serviceManager->get('config');
+        $options   = array('connection_config' => array('foo' => '%FOO%'));
+        $variables = array('foo'  => 'Bar');
+        $config['soflomo_mail']['transport']['type']      = 'Smtp';
+        $config['soflomo_mail']['transport']['options']   = $options;
+        $config['soflomo_mail']['transport']['variables'] = $variables;
+        $serviceManager->setAllowOverride(true);
+        $serviceManager->setService('config', $config);
+        $serviceManager->setAllowOverride(false);
+
+        $transport = $serviceManager->get('Soflomo\Mail\Transport');
+        $options = $transport->getOptions();
+        $this->assertEquals(array('foo' => 'Bar'), $options->getConnectionConfig());
     }
 
     public function testFactoryAllowsFqcnAsType()

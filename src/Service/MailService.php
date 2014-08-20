@@ -41,6 +41,7 @@ namespace Soflomo\Mail\Service;
 
 use Soflomo\Mail\Exception\InvalidArgumentException;
 use Soflomo\Mail\Exception\RuntimeException;
+use Soflomo\Mail\Exception\NotImplementedException;
 
 use Zend\Mime\Part    as MimePart;
 use Zend\Mime\Message as MimeMessage;
