@@ -114,47 +114,75 @@ class MailServiceTest extends TestCase
     }
 
     /**
-     * @todo Test from/to/cc/bcc address
+     * @dataProvider singleAddressProvider
      */
-    public function testServiceSetsMessageToAddress()
+    public function testServiceSetsMessageToAddress($options, $method, $expectedEmail, $expectedName)
     {
         $service = $this->service;
-        $service->send($this->defaultOptions);
+        $service->send($this->defaultOptions + $options);
 
         $message = $this->transport->getLastMessage();
-        $this->assertEquals('john@acme.org', $message->getTo()->current()->getEmail());
+        $this->assertEquals($expectedEmail, $message->$method()->current()->getEmail());
 
-        $service->send($this->defaultOptions + array(
-            'to_name' => 'John Doe',
-        ));
+        if (null === $expectedName) {
+            return;
+        }
+
+        $service->send($this->defaultOptions + $options);
 
         $message = $this->transport->getLastMessage();
-        $this->assertEquals('john@acme.org', $message->getTo()->current()->getEmail());
-        $this->assertEquals('John Doe', $message->getTo()->current()->getName());
+        $this->assertEquals($expectedEmail, $message->$method()->current()->getEmail());
+        $this->assertEquals($expectedName, $message->$method()->current()->getName());
     }
 
     /**
-     * @todo Test from/to/cc/bcc addresses
+     * @dataProvider multipleAddressProvider
      */
-    public function testServiceHandlesMultipleToAddresses()
+    public function testServiceHandlesMultipleToAddresses($options, $method, $expectedEmail1, $expectedEmail2, $expectedName1, $expectedName2)
     {
         $service = $this->service;
-        $service->send(array(
-            'to' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice'),
-            'subject'  => 'This is a test',
-            'template' => 'foo/bar/baz'
-        ));
+        $service->send($options + $this->defaultOptions);
 
         $message = $this->transport->getLastMessage();
-        $this->assertEquals(2, $message->getTo()->count());
+        $this->assertEquals(2, $message->$method()->count());
 
-        $address1 = $message->getTo()->rewind();
-        $this->assertEquals('bob@acme.org', $address1->getEmail());
-        $this->assertEquals('Bob', $address1->getName());
+        $address1 = $message->$method()->rewind();
+        $this->assertEquals($expectedEmail1, $address1->getEmail());
+        $this->assertEquals($expectedName1, $address1->getName());
 
-        $address2 = $message->getTo()->next();
-        $this->assertEquals('alice@acme.org', $address2->getEmail());
-        $this->assertEquals('Alice', $address2->getName());
+        $address2 = $message->$method()->next();
+        $this->assertEquals($expectedEmail2, $address2->getEmail());
+        $this->assertEquals($expectedName2, $address2->getName());
+    }
+
+    public function singleAddressProvider()
+    {
+        return array(
+            array(array('to' => 'john@acme.org'), 'getTo', 'john@acme.org', null),
+            array(array('to' => 'john@acme.org', 'to_name' => 'John Doe'), 'getTo', 'john@acme.org', 'John Doe'),
+
+            array(array('cc' => 'alice@acme.org'), 'getCc', 'alice@acme.org', null),
+            array(array('cc' => 'alice@acme.org', 'cc_name' => 'Alice Dane'), 'getCc', 'alice@acme.org', 'Alice Dane'),
+
+            array(array('bcc' => 'alice@acme.org'), 'getBcc', 'alice@acme.org', null),
+            array(array('bcc' => 'alice@acme.org', 'bcc_name' => 'Alice Dane'), 'getBcc', 'alice@acme.org', 'Alice Dane'),
+
+            array(array('from' => 'alice@acme.orgg'), 'getFrom', 'alice@acme.orgg', null),
+            array(array('from' => 'alice@acme.orgg', 'from_name' => 'Alice Dane'), 'getFrom', 'alice@acme.orgg', 'Alice Dane'),
+
+            array(array('reply_to' => 'alice@acme.orgg'), 'getReplyTo', 'alice@acme.orgg', null),
+            array(array('reply_to' => 'alice@acme.orgg', 'reply_to_name' => 'Alice Dane'), 'getReplyTo', 'alice@acme.orgg', 'Alice Dane'),
+        );
+    }
+
+    public function multipleAddressProvider()
+    {
+        return array(
+            array(array('to' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice')), 'getTo', 'bob@acme.org', 'alice@acme.org', 'Bob', 'Alice'),
+            array(array('cc' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice')), 'getCc', 'bob@acme.org', 'alice@acme.org', 'Bob', 'Alice'),
+            array(array('bcc' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice')), 'getBcc', 'bob@acme.org', 'alice@acme.org', 'Bob', 'Alice'),
+            array(array('reply_to' => array('bob@acme.org' => 'Bob', 'alice@acme.org' => 'Alice')), 'getReplyTo', 'bob@acme.org', 'alice@acme.org', 'Bob', 'Alice'),
+        );
     }
 
     public function testServiceRequiresSubjectOption()
