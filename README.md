@@ -29,7 +29,7 @@ file:
 
 ```
 "require": {
-    "soflomo/mail": "~0.2"
+    "soflomo/mail": "~0.3"
 }
 ```
 
