@@ -200,6 +200,7 @@ class MailService implements MailServiceInterface
         $body->setParts(array($textPart, $htmlPart));
 
         $message->setBody($body);
+        $message->getHeaders()->get('content-type')->setType('multipart/alternative');
     }
 
     /**
