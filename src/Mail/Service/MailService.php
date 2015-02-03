@@ -122,7 +122,7 @@ class MailService
         }
 
         $this->prepareMessage($message, $options);
-        $this->renderBody($message, $options,$variables);
+        $this->renderBody($message, $options, $variables);
 
         if (array_key_exists('attachments', $options)) {
             $this->addAttachments($message, $options);
