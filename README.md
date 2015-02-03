@@ -154,7 +154,8 @@ $service->send(array(
 ### Add attachments
 
 Attachment support is planned and not yet implemented. Attachments will be send
-via the `attachments` key:
+via the `attachments` key and should be an associative array where key is the filename to be used in the email
+and value is the absolute path to the attachment.
 
 ```php
 // $serviceLocator is an instance of Zend\Service\ServiceManager
@@ -165,7 +166,7 @@ $service->send(array(
   'subject'     => 'Just want to say hi',
   'template'    => 'email/test',
   'attachments' => array(
-    // ...
+    'filename.ext' => '/absolute/path/to/file
   ),
 ));
 ```
