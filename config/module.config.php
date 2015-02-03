@@ -68,7 +68,7 @@ return array(
     'service_manager' => array(
         'aliases' => array(
             'Soflomo\Mail\Renderer'  => 'ViewRenderer',
-            'Soflomo\Mail\Transport' => 'Soflomo\Mail\DefaultTransport',
+            //'Soflomo\Mail\Transport' => 'Soflomo\Mail\DefaultTransport',
             'Soflomo\Mail\Message'   => 'Soflomo\Mail\DefaultMessage',
         ),
         'factories' => array(

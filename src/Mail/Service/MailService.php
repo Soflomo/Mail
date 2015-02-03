@@ -42,12 +42,14 @@ namespace Soflomo\Mail\Service;
 use Soflomo\Mail\Exception\InvalidArgumentException;
 use Soflomo\Mail\Exception\RuntimeException;
 
+use Zend\Mime\Mime;
 use Zend\Mime\Part    as MimePart;
 use Zend\Mime\Message as MimeMessage;
 
 use Zend\Mail\Message;
 use Zend\Mail\Transport\TransportInterface;
 use Zend\View\Renderer\RendererInterface;
+use Zend\Mime\Part;
 
 /**
  * Mail service class
@@ -101,7 +103,7 @@ class MailService
      * - reply_to:        the email address to reply to
      * - reply_to_name:   the name of the user from the reply to address
      * - template_text:   the plain text version of the template
-     * - attachments:     an array of attachments (not implemented currently)
+     * - attachments:     an array of attachments. Key => attachment name, Value = path to file
      * - headers:         a key/value array of additional headers to set
      *
      * All address fields (to, cc, bcc, from, reply_to) can also be an array with
@@ -202,26 +204,24 @@ class MailService
             throw new InvalidArgumentException('"template" parameter is missing from options');
         }
 
-        $html = $this->getRenderer()->render($options['template'], $variables);
+        $body = new MimeMessage;
 
-        // We only need to set the HTML view
-        if (!array_key_exists('template_text', $options)) {
-            $message->getHeaders()->addHeaderLine('Content-Type', 'text/html');
-            $message->setBody($html);
-            return;
+        if (array_key_exists('template_text', $options)) {
+            $text = $this->getRenderer()->render($options['template_text'], $variables);
+
+            $textPart = new MimePart($text);
+            $textPart->type = 'text/plain';
+
+            $body->addPart($textPart);
         }
 
-        $text = $this->getRenderer()->render($options['template_text'], $variables);
 
+        $html = $this->getRenderer()->render($options['template'], $variables);
 
         $htmlPart = new MimePart($html);
         $htmlPart->type = 'text/html';
 
-        $textPart = new MimePart($text);
-        $textPart->type = 'text/plain';
-
-        $body = new MimeMessage;
-        $body->setParts(array($textPart, $htmlPart));
+        $body->addPart($htmlPart);
 
         $message->setBody($body);
     }
@@ -235,9 +235,30 @@ class MailService
      */
     protected function addAttachments(Message $message, array $options)
     {
-        throw new NotImplementedException(
-            'Attachments are not supported yet (why don\'t you send a pull request?)'
-        );
+        $body = $message->getBody();
+
+        foreach ($options['attachments'] as $name => $attachmentPath) {
+            $fileContent = fopen($attachmentPath, 'r');
+            $attachment = new Part($fileContent);
+            $attachment->filename = $name;
+            $attachment->type = $this->getMimeType($attachmentPath);
+            $attachment->disposition = Mime::DISPOSITION_ATTACHMENT;
+            $attachment->encoding    = Mime::ENCODING_BASE64;
+
+            $body->addPart($attachment);
+        }
+    }
+
+    /**
+     * Find mimetype of specified file
+     *
+     * @param string $filePath
+     * @return mixed
+     */
+    protected function getMimeType($filePath)
+    {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        return finfo_file($finfo, $filePath);
     }
 
     /**
