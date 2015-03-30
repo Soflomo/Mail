@@ -51,6 +51,11 @@ class MailServiceFactory implements FactoryInterface
         $renderer  = $serviceLocator->get('Soflomo\Mail\Renderer');
         $message   = $serviceLocator->get('Soflomo\Mail\Message');
 
-        return new MailService($transport, $renderer, $message);
+        $config = $serviceLocator->get('config');
+        $config = $config['soflomo_mail'];
+
+        $layout = (isset($config['layout'])) ? $config['layout'] : null;
+
+        return new MailService($transport, $renderer, $message, $layout);
     }
 }

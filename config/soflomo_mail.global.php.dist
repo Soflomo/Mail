@@ -44,6 +44,13 @@ return array(
             'from_name' => '',
             'encoding'  => 'UTF-8',
         ),
+
+        /**
+         * Path to a layout file
+         * Optional
+         */
+        'layout' => null,
+
         /**
          * Below are examples on how to setup different transports.
          */

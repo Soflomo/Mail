@@ -218,6 +218,13 @@ $service->send(array(
 ), array(), $message);
 ```
 
+### Layout
+
+In your config file you can set the path to a layoutfile and your email will be sent with that layout.
+To echo the content in the layout file you'll just use `<?= $this->content; ?>`
+
+You could also change the layout pr. email, by using the key `layout` in the options array.
+
 Configuration
 -------------
 
