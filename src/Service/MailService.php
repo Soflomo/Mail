@@ -62,6 +62,7 @@ class MailService implements MailServiceInterface
     protected $transport;
     protected $renderer;
     protected $defaultMessage;
+    protected $layout;
 
     /**
      * Constructor
@@ -69,15 +70,18 @@ class MailService implements MailServiceInterface
      * @param  TransportInterface $transport
      * @param  RendererInterface $renderer
      * @param  Message|null $defaultMessage
+     * @param  string|null layout
      * @return MailService
      */
     public function __construct(
         TransportInterface $transport,
         RendererInterface $renderer,
-        Message $defaultMessage = null
+        Message $defaultMessage = null,
+        $layout = null
     ) {
         $this->transport = $transport;
         $this->renderer  = $renderer;
+        $this->layout    = $layout;
 
         if (null !== $defaultMessage) {
             $this->defaultMessage = $defaultMessage;
@@ -180,6 +184,14 @@ class MailService implements MailServiceInterface
 
         $html = $this->getRenderer()->render($options['template'], $variables);
 
+        if (array_key_exists('layout', $options)) {
+            $html = $this->getRenderer()->render($options['layout'], array('content' => $html));
+        } else {
+            if (!is_null($this->layout)) {
+                $html = $this->getRenderer()->render($this->layout, array('content' => $html));
+            }
+        }
+
         // We only need to set the HTML view
         if (!array_key_exists('template_text', $options)) {
             $message->getHeaders()->addHeaderLine('Content-Type', 'text/html');
@@ -188,7 +200,6 @@ class MailService implements MailServiceInterface
         }
 
         $text = $this->getRenderer()->render($options['template_text'], $variables);
-
 
         $htmlPart = new MimePart($html);
         $htmlPart->type = 'text/html';
